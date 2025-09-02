@@ -2,7 +2,7 @@
 import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // Configures the build output for static export
+  // output: 'export', // <-- 刪除或註解掉這一行
 };
 
 export default nextConfig;
