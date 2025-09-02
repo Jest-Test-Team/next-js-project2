@@ -49,13 +49,13 @@ async function getWeatherData(location: string) {
 // 主頁面元件，現在可以接收 searchParams
 export default async function HomePage({ searchParams }: { searchParams: { city?: string } }) {
   // 從 URL 查詢參數中獲取縣市，如果沒有，則預設為 "臺北市"
-  const selectedCity = searchParams.city || "臺北市";
+  // 確保 searchParams 本身存在
+  const selectedCity = searchParams?.city || "臺北市";
   
   const weatherData = await getWeatherData(selectedCity);
-
+  // ...
   const location = weatherData?.records?.location?.[0];
   const weatherElements = location?.weatherElement || [];
-
   const weatherInfo = {
     locationName: location?.locationName || selectedCity,
     wx: weatherElements.find((el: WeatherElement) => el.elementName === 'Wx')?.time[0]?.parameter.parameterName || '-',
