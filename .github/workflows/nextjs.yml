@@ -26,31 +26,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: 'npm'
+          
       - name: Install Dependencies
+        # 指明工作目錄為您的專案所在的子資料夾
+        working-directory: ./cwa-weather-app
         run: npm ci
+        
       - name: Build
-        # 執行建置指令，並將我們設定的 Secret 傳入環境變數
+        # 同樣，Build 指令也要在專案資料夾裡執行
+        working-directory: ./cwa-weather-app
         run: npm run build
         env:
           CWA_API_KEY: ${{ secrets.CWA_API_KEY }}
-      - name: Upload artifact
-        # 自動上傳 `out` 資料夾的內容
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './out'
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
