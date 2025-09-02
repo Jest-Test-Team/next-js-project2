@@ -1,0 +1,56 @@
+# .github/workflows/nextjs.yml
+
+name: Deploy Next.js site to Pages
+
+on:
+  # 在推送到 `main` 分支時觸發
+  push:
+    branches: ["main"]
+  # 允許你手動從 Actions 分頁執行此工作流程
+  workflow_dispatch:
+
+# 設定 GITHUB_TOKEN 的權限，以允許部署到 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只允許一個並行的部署，跳過正在進行中的執行
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build
+        # 執行建置指令，並將我們設定的 Secret 傳入環境變數
+        run: npm run build
+        env:
+          CWA_API_KEY: ${{ secrets.CWA_API_KEY }}
+      - name: Upload artifact
+        # 自動上傳 `out` 資料夾的內容
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './out'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
