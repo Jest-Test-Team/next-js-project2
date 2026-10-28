@@ -23,7 +23,7 @@
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "^4.33.1"
+    "wrangler": "^4.59.1"
   },
   "overrides": {
     "tar": "^7.5.21",
